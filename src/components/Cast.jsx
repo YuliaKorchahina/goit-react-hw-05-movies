@@ -1,5 +1,7 @@
 import { useParams, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
+import PropTypes from 'prop-types';
+
 
 import { getMovieCastById } from '../servises/Api';
 import imgUrl from 'servises/utils/utils';
@@ -10,7 +12,6 @@ const Cast = () => {
   const [error, setError] = useState(null);
 
   const { movieId } = useParams();
-  console.log(movieId);
   const navigate = useNavigate();
 
   const fetchCast = async () => {
@@ -28,7 +29,7 @@ const Cast = () => {
 
   useEffect(() => {
     fetchCast();
-  }, []);
+  });
 
   const goBack = () => navigate(-1);
 
@@ -56,3 +57,10 @@ const Cast = () => {
 };
 
 export default Cast;
+
+Cast.protoTypes = {
+    id: PropTypes.string.isRequired,
+    name: PropTypes.string.isRequired,
+    profile_pathe: PropTypes.number.isRequired,
+    character: PropTypes.number.isRequired,
+  };

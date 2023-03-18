@@ -2,11 +2,8 @@ import { useEffect, useState } from 'react';
 import { Link, useParams, useNavigate } from 'react-router-dom';
 import PropTypes from 'prop-types';
 
-// import imgUrl from '../utils/utils'
 import { getMovieById } from 'servises/Api';
 import imgUrl from 'servises/utils/utils';
-
-
 
 export const MovieDetails = () => {
   const [movie, setMovie] = useState();
@@ -30,7 +27,7 @@ export const MovieDetails = () => {
 
   useEffect(() => {
     fetchMovie();
-  }, [movieId, setLoading, setError, setMovie]);
+  });
 
   const goBack = () => navigate(-1);
 

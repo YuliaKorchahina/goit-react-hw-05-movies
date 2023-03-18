@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { getSearchMovie } from '../servises/Api';
-// import PropTypes from 'prop-types';
+import PropTypes from 'prop-types';
 
 import { Link } from 'react-router-dom';
 
@@ -26,20 +26,13 @@ export const Movies = () => {
 
   useEffect(() => {
     getSearchMoviebyQuery();
-  }, []);
+  });
 
   const handleSubmit = e => {
     e.preventDefault();
     getSearchMoviebyQuery();
   };
 
-  // const setting = value => {
-  //   // request->
-  //   setSearch({ movieQuery: evt.target.value });
-  // };
-  // const onSearch = ({ movieQuery }) => {
-  //   setSearch({ movieQuery });
-  // };
   return (
     <>
       <p>Enter movie</p>
@@ -71,6 +64,8 @@ export const Movies = () => {
 };
 
 
-// Movies.propTypes = {
-//   handleSubmit: PropTypes.func.isRequired, 
-// }
+Movies.protoTypes = {
+  title: PropTypes.string.isRequired,
+  id: PropTypes.string.isRequired,
+
+}
