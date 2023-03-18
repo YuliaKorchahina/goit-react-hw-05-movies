@@ -1,60 +1,77 @@
 import { useEffect, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { Link, useParams, useNavigate } from 'react-router-dom';
 import PropTypes from 'prop-types';
 
+// import imgUrl from '../utils/utils'
 import { getMovieById } from 'servises/Api';
+import imgUrl from 'servises/utils/utils';
 
-const BASE_IMG_URL = 'https://image.tmdb.org/t/p/w500';
-// const DEFAULT_IMG_URL =
-//   'https://images.prom.ua/211029177_w640_h640_211029177.jpg';
+
 
 export const MovieDetails = () => {
-  const [state, setState] = useState(null);
+  const [movie, setMovie] = useState();
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
 
   const { movieId } = useParams();
   const navigate = useNavigate();
 
+  const fetchMovie = async () => {
+    try {
+      const result = await getMovieById(movieId);
+      setMovie(result);
+      setLoading(true);
+    } catch (error) {
+      setError(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    const fetchMovie = async () => {
-      try {
-        const result = await getMovieById(movieId);
-        setState(result);
-        setLoading(true);
-      } catch (error) {
-        setError(error);
-      } finally {
-        setLoading(false);
-      }
-    };
     fetchMovie();
-  }, [movieId, setLoading, setError, setState]);
+  }, [movieId, setLoading, setError, setMovie]);
 
   const goBack = () => navigate(-1);
 
-  //   const imgUrl = poster_path => {
-  //     console.log(imgUrl(state.poster_path));
-  //     return  BASE_IMG_URL + poster_path
-  //     // return poster_path ? BASE_IMG_URL + poster_path : DEFAULT_IMG_URL
+  const getReleaseDate = releaseDate => {
+    return releaseDate ? new Date(releaseDate).getFullYear() : 'No information';
+  };
 
-  //   };
-
-  //   const { poster_path } = state.poster_path;
+  //   const poster_path = movie?.poster_path;
+  const { poster_path } = movie ?? '';
   return (
     <>
-    <button onClick={goBack}>Go back</button>
-      {state && (
+      <button onClick={goBack}>Go back</button>
+      {movie && (
         <>
           {loading && <p>...Loading</p>}
           <h2>
-            {state.title} ({state.release_date})
+            {movie.title} ({getReleaseDate(movie.release_date)})
           </h2>
-          <img src={BASE_IMG_URL + state.poster_path} alt={state.title} />
-          <p>User Score: {state.vote_average}</p>
-          <p>Overview</p>
-          <p>{state.overview}</p>
+          <ul>
+            <img src={imgUrl(poster_path)} alt={movie.title} width={300} />
+            <li>
+              <p>User Score: {movie.vote_average.toFixed(1)}</p>
+            </li>
+            <li>
+              <p>Overview</p>
+            </li>
+            <li>
+              <p>{movie.overview}</p>
+            </li>
+          </ul>
           {/* <p>Genres</p> */}
+
+          <h3>More information</h3>
+          <ul>
+            <li>
+              <Link to={`/movies/${movieId}/cast`}>Cast</Link>
+            </li>
+            <li>
+              <Link to={`/movies/${movieId}/review`}>Review</Link>
+            </li>
+          </ul>
         </>
       )}
       {error && <p>Movie load fail</p>}
@@ -62,10 +79,9 @@ export const MovieDetails = () => {
   );
 };
 
-
-MovieDetails.protoTypes={
-    title: PropTypes.string.isRequired,
-    overview: PropTypes.string.isRequired,
-    release_date: PropTypes.number.isRequired,
-    vote_average : PropTypes.number.isRequired,
-}
+MovieDetails.protoTypes = {
+  title: PropTypes.string.isRequired,
+  overview: PropTypes.string.isRequired,
+  release_date: PropTypes.number.isRequired,
+  vote_average: PropTypes.number.isRequired,
+};

@@ -9,7 +9,7 @@ const instance = axios.create({
 
 export const getTrendingMovie = async () => {
   try {
-    const {data}= await instance.get(`trending/all/day`);
+    const { data } = await instance.get(`trending/all/day`);
     return data;
   } catch (error) {
     console.log(error);
@@ -17,14 +17,30 @@ export const getTrendingMovie = async () => {
 };
 
 export const getSearchMovie = async search => {
- 
+const {data} = await instance.get(`search/movie`, {
+  params: {
+    query: `${search}`,
+  }
+});
+return data;
+
 };
 
 export const getMovieById = async id => {
   try {
-    const {data}= await instance.get(`/movie/${id}`);
+    const { data } = await instance.get(`/movie/${id}`);
     return data;
   } catch (error) {
     console.log(error);
   }
-}
+};
+
+
+export const getMovieCastById = async id => {
+  try {
+    const { data } = await instance.get(`/movie/${id}/credits`);
+    return data;
+  } catch (error) {
+    console.log(error);
+  }
+};
