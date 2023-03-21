@@ -44,3 +44,12 @@ export const getMovieCastById = async id => {
     console.log(error);
   }
 };
+
+export const getMovieReviewById = async id => {
+  try {
+    const { data } = await instance.get(`/movie/${id}/reviews`);
+    return data;
+  } catch (error) {
+    console.log(error);
+  }
+};

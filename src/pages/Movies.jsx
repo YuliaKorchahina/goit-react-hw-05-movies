@@ -1,16 +1,15 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { getSearchMovie } from '../servises/Api';
 import PropTypes from 'prop-types';
 
 import { Link } from 'react-router-dom';
 
-export const Movies = () => {
+ const Movies = () => {
   const [movies, setMovies] = useState([]);
   const [search, setSearch] = useSearchParams();
 
   const movieQuery = search.get('movieQuery') ?? '';
-
   const getSearchMoviebyQuery = async () => {
     try {
       const { results } = await getSearchMovie(movieQuery);
@@ -24,9 +23,9 @@ export const Movies = () => {
     }
   };
 
-  useEffect(() => {
-    getSearchMoviebyQuery();
-  });
+  // useEffect(() => {
+  //   getSearchMoviebyQuery();
+  // }, []);
 
   const handleSubmit = e => {
     e.preventDefault();
@@ -35,7 +34,7 @@ export const Movies = () => {
 
   return (
     <>
-      <p>Enter movie</p>
+      <p>Enter movie title</p>
       <form onSubmit={handleSubmit}>
         <input
           type="text"
@@ -45,11 +44,8 @@ export const Movies = () => {
           value={movieQuery}
           onChange={evt => setSearch({ movieQuery: evt.target.value })}
         />
-        <button type="submit" onClick={() => null}>
-          <span>Search</span>
-        </button>
+        <button type="submit" onClick={() => null}><span>Search</span></button>
       </form>
-
       {movies && (
         <ul>
           {movies.map(movie => (
@@ -63,9 +59,9 @@ export const Movies = () => {
   );
 };
 
-
 Movies.protoTypes = {
   title: PropTypes.string.isRequired,
   id: PropTypes.string.isRequired,
-
 }
+
+export default Movies;

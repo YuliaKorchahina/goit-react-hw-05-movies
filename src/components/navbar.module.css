@@ -3,13 +3,16 @@ ul{
 }
 .navbar {
     display: flex;
+  
     justify-content: flex-start;
     gap: 25px;
-    margin-bottom: 20px;
-    padding: 20px 0;
+    padding: 20px 15px;
+    background-color: palevioletred;
+    /* width: 100%; */
 }
 
 .link {
+    /* padding-left: 20px; */
     text-decoration: none;
     display: inline-block;
     padding: 10px 15px;

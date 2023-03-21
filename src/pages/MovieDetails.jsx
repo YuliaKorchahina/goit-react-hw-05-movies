@@ -1,76 +1,62 @@
 import { useEffect, useState } from 'react';
-import { Link, useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import PropTypes from 'prop-types';
 
 import { getMovieById } from 'servises/Api';
 import imgUrl from 'servises/utils/utils';
+import styled from '../components/style.module.css';
+import MovieInformation from 'components/MovieInformation';
 
-export const MovieDetails = () => {
-  const [movie, setMovie] = useState();
+const MovieDetails = () => {
+  const [movie, setMovie] = useState(null);
   const [error, setError] = useState(null);
-  const [loading, setLoading] = useState(false);
 
   const { movieId } = useParams();
   const navigate = useNavigate();
 
-  const fetchMovie = async () => {
-    try {
-      const result = await getMovieById(movieId);
-      setMovie(result);
-      setLoading(true);
-    } catch (error) {
-      setError(error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   useEffect(() => {
+    const fetchMovie = async () => {
+      try {
+        const result = await getMovieById(movieId);
+        setMovie(result);
+      } catch (error) {
+        setError(error);
+      }
+    };
     fetchMovie();
-  });
+  }, [movieId]);
 
   const goBack = () => navigate(-1);
 
   const getReleaseDate = releaseDate => {
     return releaseDate ? new Date(releaseDate).getFullYear() : 'No information';
   };
+  const genres = movie ? movie.genres.map(genre => genre.name).join(', ') : '';
 
   //   const poster_path = movie?.poster_path;
   const { poster_path } = movie ?? '';
   return (
     <>
-      <button onClick={goBack}>Go back</button>
       {movie && (
         <>
-          {loading && <p>...Loading</p>}
           <h2>
             {movie.title} ({getReleaseDate(movie.release_date)})
           </h2>
           <ul>
-            <img src={imgUrl(poster_path)} alt={movie.title} width={300} />
             <li>
+              <img src={imgUrl(poster_path)} alt={movie.title} width={300} />
               <p>User Score: {movie.vote_average.toFixed(1)}</p>
-            </li>
-            <li>
               <p>Overview</p>
-            </li>
-            <li>
               <p>{movie.overview}</p>
+              <p>Genres: {genres}</p>
             </li>
           </ul>
-          {/* <p>Genres</p> */}
-
-          <h3>More information</h3>
-          <ul>
-            <li>
-              <Link to={`/movies/${movieId}/cast`}>Cast</Link>
-            </li>
-            <li>
-              <Link to={`/movies/${movieId}/review`}>Review</Link>
-            </li>
-          </ul>
+          <MovieInformation movieId={movieId}/>
         </>
       )}
+      <button onClick={goBack} className={styled.btn}>
+        Go back
+      </button>
       {error && <p>Movie load fail</p>}
     </>
   );
@@ -82,3 +68,5 @@ MovieDetails.protoTypes = {
   release_date: PropTypes.number.isRequired,
   vote_average: PropTypes.number.isRequired,
 };
+
+export default MovieDetails;

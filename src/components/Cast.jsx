@@ -2,9 +2,9 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 
-
 import { getMovieCastById } from '../servises/Api';
 import imgUrl from 'servises/utils/utils';
+import styled from './style.module.css';
 
 const Cast = () => {
   const [actors, setActors] = useState();
@@ -14,43 +14,44 @@ const Cast = () => {
   const { movieId } = useParams();
   const navigate = useNavigate();
 
-  const fetchCast = async () => {
-    try {
-      const result = await getMovieCastById(movieId);
-      setActors(result.cast);
-      console.log(result.cast);
-      setLoading(true);
-    } catch (error) {
-      setError(error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   useEffect(() => {
+    const fetchCast = async () => {
+      try {
+        const result = await getMovieCastById(movieId);
+        setActors(result.cast);
+        setLoading(true);
+      } catch (error) {
+        setError(error);
+      } finally {
+        setLoading(false);
+      }
+    };
     fetchCast();
-  });
+  }, [movieId]);
 
   const goBack = () => navigate(-1);
 
   return (
     <>
-      <button onClick={goBack}>Go back</button>
+      <button onClick={goBack} className={styled.btn}>
+        Go back
+      </button>
       {actors && (
-        <ul>
+        <ul className={styled.list}>
           {actors.map(({ id, name, profile_path, character }) => (
             <>
-              <li key={id}>Name: {name}</li>
-              <li>
-                <img src={imgUrl(profile_path)} alt={name} width={300} />
+              <li key={id}>
+                <div>
+                  <p>Name: {name}</p>
+                  <img src={imgUrl(profile_path)} alt={name} width={300} />
+                  <p>Character: {character}</p>
+                </div>
               </li>
-              <li>Character: {character}</li>
             </>
           ))}
         </ul>
       )}
       {loading && <p>...Loading</p>}
-
       {error && <p>Cast load fail</p>}
     </>
   );
@@ -59,8 +60,8 @@ const Cast = () => {
 export default Cast;
 
 Cast.protoTypes = {
-    id: PropTypes.string.isRequired,
-    name: PropTypes.string.isRequired,
-    profile_pathe: PropTypes.number.isRequired,
-    character: PropTypes.number.isRequired,
-  };
+  id: PropTypes.string.isRequired,
+  name: PropTypes.string.isRequired,
+  profile_pathe: PropTypes.number.isRequired,
+  character: PropTypes.number.isRequired,
+};
