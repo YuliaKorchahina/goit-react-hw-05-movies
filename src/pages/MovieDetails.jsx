@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useLocation, Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
+import { useRef } from 'react';
 
 import { getMovieById } from 'servises/Api';
 import imgUrl from 'servises/utils/utils';
@@ -12,7 +13,8 @@ const MovieDetails = () => {
   const [error, setError] = useState(null);
 
   const { movieId } = useParams();
-  const navigate = useNavigate();
+  const location = useLocation();
+  const locationRef = useRef(location.state?.from ?? '/');
 
   useEffect(() => {
     const fetchMovie = async () => {
@@ -26,8 +28,6 @@ const MovieDetails = () => {
     fetchMovie();
   }, [movieId]);
 
-  const goBack = () => navigate(-1);
-
   const getReleaseDate = releaseDate => {
     return releaseDate ? new Date(releaseDate).getFullYear() : 'No information';
   };
@@ -37,6 +37,9 @@ const MovieDetails = () => {
   const { poster_path } = movie ?? '';
   return (
     <>
+      <Link className={styled.btn} to={locationRef.current}>
+        Go back
+      </Link>
       {movie && (
         <>
           <h2>
@@ -51,12 +54,9 @@ const MovieDetails = () => {
               <p>Genres: {genres}</p>
             </li>
           </ul>
-          <MovieInformation movieId={movieId}/>
+          <MovieInformation movieId={movieId} />
         </>
       )}
-      <button onClick={goBack} className={styled.btn}>
-        Go back
-      </button>
       {error && <p>Movie load fail</p>}
     </>
   );

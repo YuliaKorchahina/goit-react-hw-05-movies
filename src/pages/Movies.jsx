@@ -1,19 +1,20 @@
-import { useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { useSearchParams, useLocation } from 'react-router-dom';
 import { getSearchMovie } from '../servises/Api';
 import PropTypes from 'prop-types';
 
 import { Link } from 'react-router-dom';
 
- const Movies = () => {
+const Movies = () => {
   const [movies, setMovies] = useState([]);
   const [search, setSearch] = useSearchParams();
+
+const location =  useLocation();
 
   const movieQuery = search.get('movieQuery') ?? '';
   const getSearchMoviebyQuery = async () => {
     try {
       const { results } = await getSearchMovie(movieQuery);
-      console.log(results);
       setMovies(results);
       if (results.length === 0) {
         return await Promise.reject(new Error(`" ${movieQuery} "`));
@@ -23,9 +24,13 @@ import { Link } from 'react-router-dom';
     }
   };
 
-  // useEffect(() => {
-  //   getSearchMoviebyQuery();
-  // }, []);
+  useEffect(
+    () => {
+      getSearchMoviebyQuery();
+    },
+    //eslint-disable-next-line react-hooks/exhaustive-deps
+    []
+  );
 
   const handleSubmit = e => {
     e.preventDefault();
@@ -44,13 +49,15 @@ import { Link } from 'react-router-dom';
           value={movieQuery}
           onChange={evt => setSearch({ movieQuery: evt.target.value })}
         />
-        <button type="submit" onClick={() => null}><span>Search</span></button>
+        <button type="submit" onClick={() => null}>
+          <span>Search</span>
+        </button>
       </form>
       {movies && (
         <ul>
           {movies.map(movie => (
             <li key={movie.id}>
-              <Link to={`${movie.id}`}>{movie.title}</Link>
+              <Link to={`${movie.id}`} state={{ from: location }}>{movie.title}</Link>
             </li>
           ))}
         </ul>
@@ -62,6 +69,6 @@ import { Link } from 'react-router-dom';
 Movies.protoTypes = {
   title: PropTypes.string.isRequired,
   id: PropTypes.string.isRequired,
-}
+};
 
 export default Movies;

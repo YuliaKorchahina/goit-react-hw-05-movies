@@ -1,4 +1,4 @@
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 
@@ -12,7 +12,6 @@ const Cast = () => {
   const [error, setError] = useState(null);
 
   const { movieId } = useParams();
-  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchCast = async () => {
@@ -27,15 +26,11 @@ const Cast = () => {
       }
     };
     fetchCast();
-  }, [movieId]);
-
-  const goBack = () => navigate(-1);
+  }, [movieId]); 
 
   return (
     <>
-      <button onClick={goBack} className={styled.btn}>
-        Go back
-      </button>
+   
       {actors && (
         <ul className={styled.list}>
           {actors.map(({ id, name, profile_path, character }) => (
